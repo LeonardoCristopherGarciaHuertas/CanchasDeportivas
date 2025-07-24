@@ -61,7 +61,7 @@ const Sedes: React.FC = () => {
             {sedes.map(s => (
               <tr key={s.id} style={{ borderBottom: '1px solid #e3e3e3' }}>
                 <td style={{ padding: '10px 8px', fontSize: 16 }}>{s.nombre}</td>
-                <td style={{ padding: '10px 8px', fontSize: 16 }}>{s.direccion}</td>
+                <td style={{ padding: '10px 8px', fontSize: 16 }}>{s.ubicacion}</td>
                 <td style={{ padding: '10px 8px' }}>
                   <button
                     onClick={() => { setEditing(s); setModalOpen(true); }}
