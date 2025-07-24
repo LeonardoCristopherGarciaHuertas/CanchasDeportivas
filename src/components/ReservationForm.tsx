@@ -17,8 +17,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ open, initialData, on
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setFecha(initialData?.fecha || '');
-    setHoraInicio(initialData?.hora_inicio || '');
+    setFecha(initialData?.fecha ? new Date(initialData.fecha).toISOString().split('T')[0] : '');
+    setHoraInicio(initialData?.hora_inicio);
     setHoraFin(initialData?.hora_fin || '');
     setCostoTotal(initialData?.costo_total || '');
     setEstadoReserva(initialData?.estado_reserva || '');
@@ -36,8 +36,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ open, initialData, on
     setError('');
     onSave({
       fecha,
-      hora_inicio: horaInicio,
-      hora_fin: horaFin,
+      hora_inicio: new Date(`${fecha}T${horaInicio}`).toISOString(),
+      hora_fin: new Date(`${fecha}T${horaFin}`).toISOString(),
       costo_total: parseInt(costoTotal, 10),
       estado_reserva: estadoReserva,
       observaciones

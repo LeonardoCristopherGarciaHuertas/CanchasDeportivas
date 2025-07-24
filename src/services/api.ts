@@ -52,6 +52,7 @@ export const fetchReservations = async (token: string): Promise<any[]> => {
   return res.data.data;
 };
 export const createReservation = async (reservation: any, token: string) => {
+  console.log("here, data send", reservation)
   const res = await axios.post(RESERVAS_URL, { data: reservation }, {
     headers: { Authorization: `Bearer ${token}` }
   });

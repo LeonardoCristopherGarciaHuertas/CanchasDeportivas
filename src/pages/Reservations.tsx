@@ -34,10 +34,8 @@ const Reservations: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Eliminar reserva?')) {
-      await deleteReservation(id, token);
-      loadReservations();
-    }
+    await deleteReservation(id, token);
+    loadReservations();
   };
 
   return (
@@ -86,7 +84,7 @@ const Reservations: React.FC = () => {
                       style={{ background: '#fff', color: '#1976d2', border: '1.5px solid #1976d2', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginRight: 8 }}
                     >Editar</button>
                     <button
-                      onClick={() => handleDelete(r.id)}
+                      onClick={() => handleDelete(r.documentId)}
                       style={{ background: '#fff', color: '#d32f2f', border: '1.5px solid #d32f2f', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
                     >Eliminar</button>
                   </td>
