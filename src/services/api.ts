@@ -90,6 +90,7 @@ export const updateSede = async (id: number, sede: any, token: string) => {
   return res.data.data;
 };
 export const deleteSede = async (id: number, token: string) => {
+  console.log("Deleting Sede with ID:", id);
   await axios.delete(`${SEDES_URL}/${id}`, {
     headers: { Authorization: `Bearer ${token}` }
   });

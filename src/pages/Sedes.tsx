@@ -10,13 +10,13 @@ const Sedes: React.FC = () => {
 
   const loadSedes = async () => {
     const data = await fetchSedes(token);
-    setSedes(data.map((item: any) => ({ id: item.id, ...item.attributes })));
+    setSedes(data.map((item: any) => ({...item })));
   };
 
   useEffect(() => { loadSedes(); }, []);
 
   const handleSave = async (data: any) => {
-    if (editing) await updateSede(editing.id, data, token);
+    if (editing) await updateSede(editing.documentId, data, token);
     else await createSede(data, token);
     setModalOpen(false);
     setEditing(null);
@@ -24,10 +24,8 @@ const Sedes: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Eliminar sede?')) {
-      await deleteSede(id, token);
-      loadSedes();
-    }
+    await deleteSede(id, token);
+    loadSedes();
   };
 
   return (
@@ -70,7 +68,7 @@ const Sedes: React.FC = () => {
                     style={{ background: '#fff', color: '#1976d2', border: '1.5px solid #1976d2', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginRight: 8 }}
                   >Editar</button>
                   <button
-                    onClick={() => handleDelete(s.id)}
+                    onClick={() => handleDelete(s.documentId)}
                     style={{ background: '#fff', color: '#d32f2f', border: '1.5px solid #d32f2f', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
                   >Eliminar</button>
                 </td>

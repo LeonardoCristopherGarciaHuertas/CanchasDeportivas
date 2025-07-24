@@ -11,7 +11,7 @@ const Fields: React.FC = () => {
   const loadFields = async () => {
     const data = await fetchFields(token);
     console.log('DATA RAW', data);
-    setFields(data.map((item: any) => ({ id: item.id, attributes: item.attributes })));
+    setFields(data.map((item: any) => ({ id: item.id, attributes: {...item} })));
   };
 
   useEffect(() => { loadFields(); }, []);
@@ -28,10 +28,8 @@ const Fields: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('¿Eliminar cancha?')) {
-      await deleteField(id, token);
-      loadFields();
-    }
+    const res = await deleteField(id, token);
+    loadFields();
   };
 
   return (
