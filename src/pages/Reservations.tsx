@@ -15,7 +15,7 @@ const Reservations: React.FC = () => {
     setLoading(true);
     try {
       const data = await fetchReservations(token);
-      setReservations(data.map((item: any) => ({ id: item.id, ...item.attributes })));
+      setReservations(data.map((item: any) => ({ id: item.id, ...item })));
       setError('');
     } catch (e) {
       setError('No se pudieron cargar las reservas');

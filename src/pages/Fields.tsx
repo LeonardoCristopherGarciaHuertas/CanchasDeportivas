@@ -10,8 +10,7 @@ const Fields: React.FC = () => {
 
   const loadFields = async () => {
     const data = await fetchFields(token);
-    console.log('DATA RAW', data);
-    setFields(data.map((item: any) => ({ id: item.id, attributes: {...item} })));
+    setFields(data.map((item: any) => ({ id: item.id, ...item })));
   };
 
   useEffect(() => { loadFields(); }, []);
@@ -57,20 +56,22 @@ const Fields: React.FC = () => {
           <thead>
             <tr style={{ background: '#e3f2fd' }}>
             <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Nombre</th>
+            <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Descripcion</th>
               <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {fields.map(f => (
               <tr key={f.id} style={{ borderBottom: '1px solid #e3e3e3' }}>
-                <td style={{ padding: '10px 8px', fontSize: 16 }}>{f.attributes?.nombre || ''}</td>
+                <td style={{ padding: '10px 8px', fontSize: 16 }}>{f.nombre || ''}</td>
+                <td style={{ padding: '10px 8px', fontSize: 16 }}>{f.descripcion || ''}</td>
                 <td style={{ padding: '10px 8px' }}>
                   <button
-                    onClick={() => { setEditing({ id: f.id, nombre: f.attributes?.nombre || '', descripcion: f.attributes?.descripcion || '' }); setModalOpen(true); }}
+                    onClick={() => { setEditing({ id: f.documentId, nombre: f.nombre || '', descripcion: f.descripcion || '' }); setModalOpen(true); }}
                     style={{ background: '#fff', color: '#1976d2', border: '1.5px solid #1976d2', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginRight: 8 }}
                   >Editar</button>
                   <button
-                    onClick={() => handleDelete(f.id)}
+                    onClick={() => handleDelete(f.documentId)}
                     style={{ background: '#fff', color: '#d32f2f', border: '1.5px solid #d32f2f', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
                   >Eliminar</button>
                 </td>
