@@ -27,22 +27,60 @@ const App: React.FC = () => {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  const mainContentStyle: React.CSSProperties = {
+    padding: 'var(--spacing-lg)',
+    minHeight: 'calc(100vh - 80px)' // Ajustar según altura del navbar
+  };
+
+  const accessDeniedStyle: React.CSSProperties = {
+    color: 'var(--color-error)',
+    textAlign: 'center',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 500,
+    padding: 'var(--spacing-lg)',
+    background: 'white',
+    borderRadius: 'var(--border-radius-md)',
+    boxShadow: 'var(--shadow-level-2)',
+    margin: 'var(--spacing-lg) 0'
+  };
+
   return (
     <Router>
       <Navbar isAuthenticated={isAuthenticated} />
-      <div style={{ padding: 32 }}>
+      <div className="container" style={mainContentStyle}>
         <Switch>
           <Route path="/" exact>
             <Home />
           </Route>
           <Route path="/fields">
-            {isAuthenticated ? <Fields /> : <h2 style={{color:'red'}}>Acceso denegado. Inicia sesión para continuar.</h2>}
+            {isAuthenticated ? (
+              <Fields />
+            ) : (
+              <div style={accessDeniedStyle}>
+                <h2>🔒 Acceso denegado</h2>
+                <p>Inicia sesión para continuar.</p>
+              </div>
+            )}
           </Route>
           <Route path="/reservations">
-            {isAuthenticated ? <Reservations /> : <h2 style={{color:'red'}}>Acceso denegado. Inicia sesión para continuar.</h2>}
+            {isAuthenticated ? (
+              <Reservations />
+            ) : (
+              <div style={accessDeniedStyle}>
+                <h2>🔒 Acceso denegado</h2>
+                <p>Inicia sesión para continuar.</p>
+              </div>
+            )}
           </Route>
           <Route path="/venues">
-            {isAuthenticated ? <Sedes /> : <h2 style={{color:'red'}}>Acceso denegado. Inicia sesión para continuar.</h2>}
+            {isAuthenticated ? (
+              <Sedes />
+            ) : (
+              <div style={accessDeniedStyle}>
+                <h2>🔒 Acceso denegado</h2>
+                <p>Inicia sesión para continuar.</p>
+              </div>
+            )}
           </Route>
           <Route path="/login">
             <Login onLogin={() => setIsAuthenticated(true)} />

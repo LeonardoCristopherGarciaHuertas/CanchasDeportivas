@@ -7,10 +7,18 @@ const Fields: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<any | null>(null);
   const [token] = useState(localStorage.getItem('token') || '');
+  const [loading, setLoading] = useState(true);
 
   const loadFields = async () => {
-    const data = await fetchFields(token);
-    setFields(data.map((item: any) => ({ id: item.id, ...item })));
+    setLoading(true);
+    try {
+      const data = await fetchFields(token);
+      setFields(data.map((item: any) => ({ id: item.id, ...item })));
+    } catch (error) {
+      console.error('Error loading fields:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { loadFields(); }, []);
@@ -27,59 +35,231 @@ const Fields: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    const res = await deleteField(id, token);
-    loadFields();
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta cancha?')) {
+      await deleteField(id, token);
+      loadFields();
+    }
   };
 
-  return (
-    <div style={{
-      maxWidth: 700,
-      margin: '48px auto',
-      background: '#fff',
-      padding: 36,
-      borderRadius: 18,
-      boxShadow: '0 8px 32px rgba(0,0,0,0.10)',
-      minHeight: 400,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }}>
-      <h1 style={{ color: '#1976d2', fontWeight: 800, fontSize: 36, marginBottom: 24, letterSpacing: 1, textAlign: 'center' }}>Listado de Canchas</h1>
-      <button
-        onClick={() => { setEditing(null); setModalOpen(true); }}
-        style={{
-          background: '#1976d2', color: '#fff', border: 'none', borderRadius: 7, padding: '10px 28px', fontWeight: 700, fontSize: 18, cursor: 'pointer', letterSpacing: 1, marginBottom: 24, boxShadow: '0 2px 8px rgba(25,118,210,0.08)'
-        }}
-      >Agregar Cancha</button>
-      <div style={{ width: '100%', overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fafbfc' }}>
-          <thead>
-            <tr style={{ background: '#e3f2fd' }}>
-            <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Nombre</th>
-            <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Descripcion</th>
-              <th style={{ padding: '12px 8px', fontSize: 17, color: '#1976d2', fontWeight: 700, borderBottom: '2px solid #bbdefb', textAlign: 'left' }}>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {fields.map(f => (
-              <tr key={f.id} style={{ borderBottom: '1px solid #e3e3e3' }}>
-                <td style={{ padding: '10px 8px', fontSize: 16 }}>{f.nombre || ''}</td>
-                <td style={{ padding: '10px 8px', fontSize: 16 }}>{f.descripcion || ''}</td>
-                <td style={{ padding: '10px 8px' }}>
-                  <button
-                    onClick={() => { setEditing({ id: f.documentId, nombre: f.nombre || '', descripcion: f.descripcion || '' }); setModalOpen(true); }}
-                    style={{ background: '#fff', color: '#1976d2', border: '1.5px solid #1976d2', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginRight: 8 }}
-                  >Editar</button>
-                  <button
-                    onClick={() => handleDelete(f.documentId)}
-                    style={{ background: '#fff', color: '#d32f2f', border: '1.5px solid #d32f2f', borderRadius: 7, padding: '7px 18px', fontWeight: 700, fontSize: 15, cursor: 'pointer' }}
-                  >Eliminar</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  const containerStyle: React.CSSProperties = {
+    background: 'white',
+    borderRadius: 'var(--border-radius-lg)',
+    boxShadow: 'var(--shadow-level-3)',
+    padding: 'var(--spacing-xl)',
+    minHeight: '60vh'
+  };
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 'var(--spacing-lg)',
+    flexWrap: 'wrap',
+    gap: 'var(--spacing-sm)'
+  };
+
+  const titleStyle: React.CSSProperties = {
+    color: 'var(--color-primary)',
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '2.25rem',
+    margin: 0
+  };
+
+  const addButtonStyle: React.CSSProperties = {
+    background: 'var(--color-primary)',
+    color: 'white',
+    border: 'none',
+    borderRadius: 'var(--border-radius-sm)',
+    padding: 'var(--spacing-sm) var(--spacing-md)',
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    cursor: 'pointer',
+    transition: 'var(--transition-fast)',
+    fontFamily: 'var(--font-body)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-xs)'
+  };
+
+  const tableContainerStyle: React.CSSProperties = {
+    overflowX: 'auto',
+    borderRadius: 'var(--border-radius-md)',
+    border: '1px solid var(--color-border)',
+    boxShadow: 'var(--shadow-level-1)'
+  };
+
+  const tableStyle: React.CSSProperties = {
+    width: '100%',
+    borderCollapse: 'collapse',
+    background: 'white'
+  };
+
+  const headerCellStyle: React.CSSProperties = {
+    padding: 'var(--spacing-sm)',
+    fontSize: '0.875rem',
+    color: 'var(--color-text)',
+    fontWeight: 600,
+    fontFamily: 'var(--font-heading)',
+    borderBottom: '2px solid var(--color-border)',
+    textAlign: 'left',
+    background: 'var(--color-background)'
+  };
+
+  const cellStyle: React.CSSProperties = {
+    padding: 'var(--spacing-sm)',
+    fontSize: '0.875rem',
+    borderBottom: '1px solid var(--color-border)',
+    color: 'var(--color-text)'
+  };
+
+  const actionButtonStyle: React.CSSProperties = {
+    border: 'none',
+    borderRadius: 'var(--border-radius-sm)',
+    padding: 'var(--spacing-xs) var(--spacing-sm)',
+    fontWeight: 600,
+    fontSize: '0.75rem',
+    cursor: 'pointer',
+    transition: 'var(--transition-fast)',
+    fontFamily: 'var(--font-body)',
+    marginRight: 'var(--spacing-xs)'
+  };
+
+  const editButtonStyle: React.CSSProperties = {
+    ...actionButtonStyle,
+    background: 'transparent',
+    color: 'var(--color-secondary)',
+    border: '1px solid var(--color-secondary)'
+  };
+
+  const deleteButtonStyle: React.CSSProperties = {
+    ...actionButtonStyle,
+    background: 'transparent',
+    color: 'var(--color-error)',
+    border: '1px solid var(--color-error)'
+  };
+
+  const loadingStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 'var(--spacing-xl)',
+    color: 'var(--color-text)',
+    fontSize: '1rem'
+  };
+
+  const emptyStateStyle: React.CSSProperties = {
+    textAlign: 'center',
+    padding: 'var(--spacing-xl)',
+    color: 'var(--color-text)'
+  };
+
+  if (loading) {
+    return (
+      <div style={containerStyle}>
+        <div style={loadingStyle}>
+          <div className="spinner" style={{ marginRight: 'var(--spacing-sm)' }}></div>
+          Cargando canchas...
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <h1 style={titleStyle}>⚽ Gestión de Canchas</h1>
+        <button
+          onClick={() => { setEditing(null); setModalOpen(true); }}
+          style={addButtonStyle}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#1B5E20';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-level-2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-primary)';
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        >
+          ➕ Agregar Cancha
+        </button>
+      </div>
+
+      {fields.length === 0 ? (
+        <div style={emptyStateStyle}>
+          <h3>No hay canchas registradas</h3>
+          <p>Haz clic en "Agregar Cancha" para comenzar.</p>
+        </div>
+      ) : (
+        <div style={tableContainerStyle}>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={headerCellStyle}>Nombre</th>
+                <th style={headerCellStyle}>Descripción</th>
+                <th style={headerCellStyle}>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fields.map((f, index) => (
+                <tr 
+                  key={f.id}
+                  style={{
+                    backgroundColor: index % 2 === 0 ? 'white' : 'var(--color-background)'
+                  }}
+                >
+                  <td style={cellStyle}>
+                    <strong>{f.nombre || 'Sin nombre'}</strong>
+                  </td>
+                  <td style={cellStyle}>
+                    {f.descripcion || 'Sin descripción'}
+                  </td>
+                  <td style={cellStyle}>
+                    <button
+                      onClick={() => { 
+                        setEditing({ 
+                          id: f.documentId, 
+                          nombre: f.nombre || '', 
+                          descripcion: f.descripcion || '' 
+                        }); 
+                        setModalOpen(true); 
+                      }}
+                      style={editButtonStyle}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--color-secondary)';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = 'var(--color-secondary)';
+                      }}
+                    >
+                      ✏️ Editar
+                    </button>
+                    <button
+                      onClick={() => handleDelete(f.documentId)}
+                      style={deleteButtonStyle}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--color-error)';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = 'var(--color-error)';
+                      }}
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <FieldForm
         open={modalOpen}
         initialData={editing}

@@ -9,42 +9,127 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ isAuthenticated }) => {
   const location = useLocation();
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     window.location.href = '/';
   };
-  const linkStyle = {
-    color: '#fff',
+
+  const navbarStyle: React.CSSProperties = {
+    background: 'var(--color-primary)',
+    color: 'white',
+    padding: 'var(--spacing-sm) var(--spacing-md)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    boxShadow: 'var(--shadow-level-2)',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000
+  };
+
+  const brandStyle: React.CSSProperties = {
+    color: 'white',
     textDecoration: 'none',
-    marginRight: 12,
-    padding: '4px 14px',
-    borderRadius: 6,
+    fontFamily: 'var(--font-heading)',
+    fontWeight: 700,
+    fontSize: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-xs)'
+  };
+
+  const navLinksStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 'var(--spacing-xs)'
+  };
+
+  const linkStyle: React.CSSProperties = {
+    color: 'white',
+    textDecoration: 'none',
+    padding: 'var(--spacing-xs) var(--spacing-sm)',
+    borderRadius: 'var(--border-radius-sm)',
     fontWeight: 500,
-    fontSize: 18,
-    transition: 'background 0.2s, color 0.2s'
+    fontSize: '0.875rem',
+    transition: 'var(--transition-fast)',
+    fontFamily: 'var(--font-body)'
   };
-  const activeStyle = {
-    background: '#fff',
-    color: '#1976d2',
-    fontWeight: 700
+
+  const activeLinkStyle: React.CSSProperties = {
+    ...linkStyle,
+    background: 'rgba(255, 255, 255, 0.2)',
+    fontWeight: 600
   };
+
+  const logoutButtonStyle: React.CSSProperties = {
+    background: 'transparent',
+    border: '2px solid white',
+    color: 'white',
+    borderRadius: 'var(--border-radius-sm)',
+    padding: 'var(--spacing-xs) var(--spacing-sm)',
+    cursor: 'pointer',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    fontFamily: 'var(--font-body)',
+    marginLeft: 'var(--spacing-sm)',
+    transition: 'var(--transition-fast)'
+  };
+
   return (
-    <nav style={{ background: '#1976d2', color: '#fff', padding: 16, display: 'flex', alignItems: 'center', gap: 24 }}>
-      <Link to="/" style={{ color: '#fff', textDecoration: 'none', fontWeight: 'bold', fontSize: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <img src="/soccer-ball.svg" alt="Logo" style={{ width: 32, height: 32, verticalAlign: 'middle' }} /> SGCD
+    <nav style={navbarStyle}>
+      <Link to="/" style={brandStyle}>
+        <img 
+          src="/soccer-ball.svg" 
+          alt="Logo" 
+          style={{ width: 32, height: 32 }} 
+        />
+        SGCD
       </Link>
-      <div style={{ display: 'flex', gap: 8 }}>
+      
+      <div style={navLinksStyle}>
         {isAuthenticated ? (
           <>
-            <Link to="/fields" style={location.pathname.startsWith('/fields') ? { ...linkStyle, ...activeStyle } : linkStyle}>Canchas</Link>
-            <Link to="/reservations" style={location.pathname.startsWith('/reservations') ? { ...linkStyle, ...activeStyle } : linkStyle}>Reservas</Link>
-            <Link to="/venues" style={location.pathname.startsWith('/venues') ? { ...linkStyle, ...activeStyle } : linkStyle}>Sedes</Link>
-            <button onClick={handleLogout} style={{ background: 'transparent', border: '1px solid #fff', color: '#fff', borderRadius: 6, padding: '4px 14px', cursor: 'pointer', fontSize: 16, marginLeft: 12 }}>
+            <Link 
+              to="/fields" 
+              style={location.pathname.startsWith('/fields') ? activeLinkStyle : linkStyle}
+            >
+              Canchas
+            </Link>
+            <Link 
+              to="/reservations" 
+              style={location.pathname.startsWith('/reservations') ? activeLinkStyle : linkStyle}
+            >
+              Reservas
+            </Link>
+            <Link 
+              to="/venues" 
+              style={location.pathname.startsWith('/venues') ? activeLinkStyle : linkStyle}
+            >
+              Sedes
+            </Link>
+            <button 
+              onClick={handleLogout} 
+              style={logoutButtonStyle}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'white';
+                e.currentTarget.style.color = 'var(--color-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = 'white';
+              }}
+            >
               Cerrar sesión
             </button>
           </>
         ) : (
-          <Link to="/login" style={location.pathname === '/login' ? { ...linkStyle, ...activeStyle } : linkStyle}>Iniciar sesión</Link>
+          <Link 
+            to="/login" 
+            style={location.pathname === '/login' ? activeLinkStyle : linkStyle}
+          >
+            Iniciar sesión
+          </Link>
         )}
       </div>
     </nav>
